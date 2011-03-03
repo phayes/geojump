@@ -1,0 +1,93 @@
+<?php
+
+function geojump_menu() {
+  $items = array();
+  $items['geojump'] = array(
+    'type' => MENU_CALLBACK,
+    'title' => 'GeoJump JSON callback',
+    'page arguments' => array(t('Geojump json geocoder')),
+    'page callback' => 'geojump_geocode_json',
+    'access callback' => TRUE,
+  );
+  return $items;
+}
+
+function geojump_geocode_json() {
+  $geocode = geocode('geocode_google',$_GET['query']);
+  drupal_json_output($geocode);
+}
+
+
+/**
+ * Implements hook_ctools_plugin_type
+ */
+function geojump_ctools_plugin_type() {
+  return array(
+    'behaviors' => array(
+      'use hooks' => TRUE,
+    )
+  );
+}
+
+/**
+ * Implements hook_ctools_plugin_api().
+ */
+function geojump_ctools_plugin_api($module, $api) {
+  return array('version' => 1);
+}
+
+/**
+ * Implements hook_openlayers_behaviors().
+ */
+function geojump_openlayers_behaviors() {
+  return array(
+    'openlayers_behavior_geojump' => array(
+      'title' => t('geojump'),
+      'description' => t('Jump around'),
+      'type' => 'map',
+      'path' => drupal_get_path('module', 'geojump') .'/includes/behaviors',
+      'file' => 'openlayers_behavior_geojump.inc',
+      'behavior' => array(
+        'class' => 'openlayers_behavior_geojump',
+        'parent' => 'openlayers_behavior',
+      ),
+    ),
+  );
+}
+
+/**
+ * Implementation of hook_openlayers_presets().
+ */
+function geojump_openlayers_presets() {
+  // Create full preset array
+  $default = new stdClass();
+  $default->api_version = 1;
+  $default->name = 'geojump_map';
+  $default->title = t('geojump Map');
+  $default->description = t('An example map for Geojump');
+  $default->data = array(
+    'projection' => '900913',
+    'width' => '600px',
+    'default_layer' => 'osm_mapnik',
+    'height' => '400px',
+    'center' => array(
+      'initial' => array(
+        'centerpoint' => '0,0',
+        'zoom' => '2'
+      )
+    ),
+    'options' => array(
+      'maxExtent' => openlayers_get_extent('900913'),
+    ),
+    'behaviors' => array(
+      'openlayers_behavior_panzoombar' => array(),
+      'openlayers_behavior_attribution' => array(),
+      'openlayers_behavior_geojump' => array(),
+      'openlayers_behavior_keyboarddefaults' => array()
+    ),
+    'layers' => array(
+      'osm_mapnik',
+    )
+  );
+  return array('geojump_map' => $default);
+}

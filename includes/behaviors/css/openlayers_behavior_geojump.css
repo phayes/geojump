@@ -1,0 +1,11 @@
+div.geojump-container {
+  padding:10px;
+  text-align:center;
+}
+
+input.geojump-text {
+  height:20px;
+  width:500px;
+  margin:0px auto;
+  color: grey;
+}
