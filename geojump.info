@@ -2,5 +2,5 @@ name = Geojump
 description = Provides a behavior for OpenLayers - allowing users to quickly jump to a location on the map by providing an address or other geocodable text
 core = 7.x
 dependencies[] = openlayers
-dependencies[] = geocodce
+dependencies[] = geocode
 files[] = geojump.module
